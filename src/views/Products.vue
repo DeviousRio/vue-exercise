@@ -7,25 +7,34 @@
       </div>
 
       <div class="product-info">
-        <h1>{{ product }}</h1>
+        <h1>{{ title }}</h1>
 
-        <p v-if="inventory > 10">In Stock</p>
-        <p v-else-if="inventory <= 10 && inventory > 0">Almost sold out! Only {{ inventory }} left !</p>
+        <!-- Conditional Rendering -->
+        <p v-if="inStock > 10">In Stock</p>
+        <p v-else-if="inStock <= 10 && inStock > 0">Almost sold out !</p>
         <p v-else>Out of Stock</p>
 
         <p>{{ description }}</p>
 
+        <!-- List Rendering -->
         <ul>
           <li v-for="detail in details" v-bind:key="detail.id">
             <p>{{ detail }}</p>
           </li>
         </ul>
 
-        <div class="colorType" v-for="variant in variants" v-bind:key="variant.variantId">
-          <p @mouseover="updateProduct(variant.variantImage)">{{ variant.variantColor }}</p>
+        <!-- Class & Style Binding, Event Handling -->
+        <div class="color-container">
+          <div
+            v-for="(variant, index) in variants"
+            v-bind:key="variant.variantId"
+            class="color-box"
+            v-bind:style="{ backgroundColor: variant.variantColor }"
+            @mouseover="updateProduct(index)"
+          ></div>
         </div>
 
-        <button class="cart-button" @click="addToCart">Add to Cart</button>
+        <button class="cart-button" @click="addToCart" v-bind:class="{ disabledButton: !inStock }">Add to Cart</button>
         <button class="cart-remove" @click="removeFromCart">Remove from Cart</button>
 
         <div class="cart">
@@ -43,38 +52,55 @@ export default {
   name: "Products",
   data() {
     return {
+      brand: 'Vue Mastery',
       product: "Socks",
       description: "Faster memory speed, wireless and dual digital mic",
-      link: "https://www.amazon.com/s/ref=nb_sb_noss?url=search-alias%3Daps&field-keywords=socks",
-      image: 'https://www.vuemastery.com/images/challenges/vmSocks-green-onWhite.jpg',
-      inventory: 10,
+      link:
+        "https://www.amazon.com/s/ref=nb_sb_noss?url=search-alias%3Daps&field-keywords=socks",
+      selectedVariant: 0,
       details: ["80% cotton", "20% polyester", "Gender-neutral"],
       variants: [
         {
           variantId: 1,
-          variantColor: 'green',
-          variantImage: 'https://www.vuemastery.com/images/challenges/vmSocks-green-onWhite.jpg'
+          variantColor: "green",
+          variantImage:
+            "https://www.vuemastery.com/images/challenges/vmSocks-green-onWhite.jpg",
+          variantQuantity: 9
         },
         {
           variantId: 2,
-          variantColor: 'blue',
-          variantImage: 'https://www.vuemastery.com/images/challenges/vmSocks-blue-onWhite.jpg'
+          variantColor: "blue",
+          variantImage:
+            "https://www.vuemastery.com/images/challenges/vmSocks-blue-onWhite.jpg",
+          variantQuantity: 0
         }
       ],
-      cart: 0,
+      cart: 0
     };
   },
-    methods: {
-        addToCart() {
-          this.cart += 1;
-        },
-        removeFromCart() {
-          this.cart -= 1;
-        },
-        updateProduct(variantImage) {
-          this.image = variantImage;
-        }
-      }
+  methods: {
+    addToCart() {
+      this.cart += 1;
+    },
+    removeFromCart() {
+      this.cart -= 1;
+    },
+    updateProduct(index) {
+      this.selectedVariant = index;
+    }
+  },
+  // Computed Properties
+  computed: {
+    title() {
+      return this.brand + ' ' + this.product;
+    },
+    image() {
+      return this.variants[this.selectedVariant].variantImage;
+    },
+    inStock() {
+      return this.variants[this.selectedVariant].variantQuantity;
+    }
+  }
 };
 </script>
 
@@ -143,22 +169,28 @@ img {
   font-weight: bold;
 }
 
+.product-info .color-container {
+  display: flex;
+  flex-wrap: wrap;
+  flex: 0 0 100%;
+}
+
 .product-info .cart-button {
   cursor: pointer;
-  flex: 0 0 15%;
+  flex: 0 0 20%;
   padding: 10px;
   margin-top: 7px;
 }
 
 .product-info .cart-remove {
   cursor: pointer;
-  flex: 0 0 17%;
+  flex: 0 0 20%;
   padding: 5px;
   margin: 7px 15px;
 }
 
 .product-info .cart {
-  flex: 0 0 17%;
+  flex: 0 0 20%;
   margin: 7px 10px;
   padding: 0;
   text-align: center;
@@ -173,7 +205,8 @@ img {
 .color-box {
   width: 40px;
   height: 40px;
-  margin-top: 5px;
+  margin: 5px 5px 0 0;
+  cursor: pointer;
 }
 
 .cart {
