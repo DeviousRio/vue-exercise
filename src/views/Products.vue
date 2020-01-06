@@ -8,11 +8,30 @@
 
       <div class="product-info">
         <h1>{{ product }}</h1>
-        <span v-if="onSale">On Sale!</span>
+
         <p v-if="inventory > 10">In Stock</p>
         <p v-else-if="inventory <= 10 && inventory > 0">Almost sold out! Only {{ inventory }} left !</p>
         <p v-else>Out of Stock</p>
+
         <p>{{ description }}</p>
+
+        <ul>
+          <li v-for="detail in details" v-bind:key="detail.id">
+            <p>{{ detail }}</p>
+          </li>
+        </ul>
+
+        <div class="colorType" v-for="variant in variants" v-bind:key="variant.variantId">
+          <p @mouseover="updateProduct(variant.variantImage)">{{ variant.variantColor }}</p>
+        </div>
+
+        <button class="cart-button" @click="addToCart">Add to Cart</button>
+        <button class="cart-remove" @click="removeFromCart">Remove from Cart</button>
+
+        <div class="cart">
+          <p>Cart({{cart}})</p>
+        </div>
+
         <a v-bind:href="link" target="_blank">Click here to see more products like this</a>
       </div>
     </div>
@@ -25,13 +44,37 @@ export default {
   data() {
     return {
       product: "Socks",
-      description: 'Faster memory speed, wireless and dual digital mic',
+      description: "Faster memory speed, wireless and dual digital mic",
+      link: "https://www.amazon.com/s/ref=nb_sb_noss?url=search-alias%3Daps&field-keywords=socks",
       image: 'https://www.vuemastery.com/images/challenges/vmSocks-green-onWhite.jpg',
-      link: 'https://www.amazon.com/s/ref=nb_sb_noss?url=search-alias%3Daps&field-keywords=socks',
       inventory: 10,
-      onSale: true
+      details: ["80% cotton", "20% polyester", "Gender-neutral"],
+      variants: [
+        {
+          variantId: 1,
+          variantColor: 'green',
+          variantImage: 'https://www.vuemastery.com/images/challenges/vmSocks-green-onWhite.jpg'
+        },
+        {
+          variantId: 2,
+          variantColor: 'blue',
+          variantImage: 'https://www.vuemastery.com/images/challenges/vmSocks-blue-onWhite.jpg'
+        }
+      ],
+      cart: 0,
     };
-  }
+  },
+    methods: {
+        addToCart() {
+          this.cart += 1;
+        },
+        removeFromCart() {
+          this.cart -= 1;
+        },
+        updateProduct(variantImage) {
+          this.image = variantImage;
+        }
+      }
 };
 </script>
 
@@ -65,14 +108,66 @@ img {
   width: 50%;
 }
 
+.product-info {
+  display: flex;
+  flex-wrap: wrap;
+}
+
 .product-info p {
-  padding: 5px 0;
+  flex: 0 0 100%;
+  padding: 10px 0;
 }
 
 .product-info a {
+  flex: 0 0 100%;
   color: #16c0b0;
   font-weight: bold;
   text-decoration: none;
+  padding: 5px 0;
+  margin-top: 1em;
+}
+
+.product-info ul {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.product-info ul li {
+  flex: 0 0 100%;
+  margin-left: 50px;
+}
+
+.product-info .colorType {
+  flex: 0 0 100%;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.product-info .cart-button {
+  cursor: pointer;
+  flex: 0 0 15%;
+  padding: 10px;
+  margin-top: 7px;
+}
+
+.product-info .cart-remove {
+  cursor: pointer;
+  flex: 0 0 17%;
+  padding: 5px;
+  margin: 7px 15px;
+}
+
+.product-info .cart {
+  flex: 0 0 17%;
+  margin: 7px 10px;
+  padding: 0;
+  text-align: center;
+  height: 40px;
+}
+
+.product-info .cart p {
+  margin: 0;
+  padding: 8px;
 }
 
 .color-box {
@@ -82,10 +177,8 @@ img {
 }
 
 .cart {
-  margin-right: 25px;
-  float: right;
   border: 1px solid #d8d8d8;
-  padding: 5px 20px;
+  padding: 5px;
 }
 
 button {
