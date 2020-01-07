@@ -34,12 +34,27 @@
           ></div>
         </div>
 
+        <!-- ToDo .. -->
         <button class="cart-button" @click="addToCart" v-bind:class="{ disabledButton: !inStock }">Add to Cart</button>
         <button class="cart-remove" @click="removeFromCart">Remove from Cart</button>
 
         <div class="cart">
           <p>Cart({{cart}})</p>
         </div>
+
+        <div class="reviews-check">
+          <h2>Reviews</h2>
+          <p v-if="!reviews.length">There are no reviews yet.</p>
+          <ul>
+            <li v-for="review in reviews" v-bind:key="review.id">
+              <p>Name: {{ review.name }}</p>
+              <p>{{ review.review }}</p>
+              <p>Rating: {{ review.rating }}</p>
+            </li>
+          </ul>
+        </div>
+
+        <ProductReview @review-submitted="addReview" />
 
         <a v-bind:href="link" target="_blank">Click here to see more products like this</a>
       </div>
@@ -48,8 +63,13 @@
 </template>
 
 <script>
+import ProductReview from './ProductReview';
+
 export default {
   name: "Product",
+  components: {
+    ProductReview
+  },
   data() {
     return {
       brand: "Vue Mastery",
@@ -75,7 +95,8 @@ export default {
           variantQuantity: 0
         }
       ],
-      cart: 0
+      cart: 0,
+      reviews: []
     };
   },
   methods: {
@@ -87,6 +108,9 @@ export default {
     },
     updateProduct(index) {
       this.selectedVariant = index;
+    },
+    addReview(productReview) {
+      this.reviews.push(productReview);
     }
   },
   // Computed Properties
@@ -228,22 +252,32 @@ button {
   background-color: #d8d8d8;
 }
 
-.review-form {
-  width: 400px;
-  padding: 20px;
-  margin: 40px;
-  border: 1px solid #d8d8d8;
-}
-
 input {
   width: 100%;
   height: 25px;
   margin-bottom: 20px;
 }
 
-textarea {
-  width: 100%;
-  height: 60px;
+.reviews-check {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: left;
+}
+
+.reviews-check h2 {
+  text-align: center;
+  flex: 0 0 100%;
+}
+
+.reviews-check ul {
+  flex: 0 0 100%;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.reviews-check ul li {
+  flex: 0 0 30%;
+  list-style-type: upper-roman;
 }
 
 .tab {
