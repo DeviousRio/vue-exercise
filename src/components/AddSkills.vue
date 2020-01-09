@@ -2,14 +2,13 @@
   <div class="holder">
     <form @submit.prevent="addSkill">
       <ValidationProvider rules="required" v-slot="{ errors }">
-        <input
-          v-model="skill"
-          name="skill"
-          type="text"
-          class="text-input"
-          placeholder="Enter a skill you have..."
-        />
-        <span>{{ errors[0] }}</span>
+        <input v-model="skill" name="skill" type="text" class="text-input" placeholder="Enter a skill you have..." />
+
+        <!-- Added errors animation -->
+        <transition name="alert-in">
+            <p class="alert" v-if="errors.length > 0">{{ errors[0] }}</p>
+        </transition>
+
       </ValidationProvider>
       <input type="submit" />
     </form>
@@ -49,7 +48,7 @@ export default {
   },
   methods: {
     addSkill() {
-      if (this.skill !== "") {
+      if (this.skill !== "" && this.skill.length >= 2) {
         this.skills.push({ skill: this.skill });
       } else {
         return;
@@ -119,6 +118,33 @@ input[type="submit"] {
   margin: 1em;
   padding: 5px;
   cursor: pointer;
+}
+
+.alert {
+  background-color: #fdf2ce;
+  font-weight: bold;
+  padding: 5px;
+  display: inline-block;
+}
+
+.alert-in-enter-active {
+    animation: bounce-in .5s;
+}
+
+.alert-in-leave-active {
+    animation: bounce-in .5s reverse;
+}
+
+@keyframes bounce-in {
+    0% {
+        transform: scale(0);
+    }
+    50% {
+        transform: scale(1.5);
+    }
+    100% {
+        transform: scale(1);
+    }
 }
 
 /* div ul li {
