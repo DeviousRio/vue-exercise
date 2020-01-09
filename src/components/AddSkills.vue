@@ -1,8 +1,17 @@
 <template>
   <div class="holder">
     <form @submit.prevent="addSkill">
-      <input type="text" placeholder="Enter a skill you have.." v-model="skill" />
-      <input type="submit" placeholder="Submit">
+      <ValidationProvider rules="required" v-slot="{ errors }">
+        <input
+          v-model="skill"
+          name="skill"
+          type="text"
+          class="text-input"
+          placeholder="Enter a skill you have..."
+        />
+        <span>{{ errors[0] }}</span>
+      </ValidationProvider>
+      <input type="submit" />
     </form>
 
     <ul>
@@ -39,10 +48,14 @@ export default {
     };
   },
   methods: {
-      addSkill() {
-          this.skills.push({skill: this.skill});
-          this.skill = '';
+    addSkill() {
+      if (this.skill !== "") {
+        this.skills.push({ skill: this.skill });
+      } else {
+        return;
       }
+      this.skill = "";
+    }
   }
 };
 </script>
@@ -80,13 +93,20 @@ p {
 }
 
 form {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
 }
 
-input[type="text"] {
-  width: 100%;
+form span {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  flex: 0 0 100%;
+}
+
+form span input {
+  flex: 0 0 100%;
   border: 0;
   padding: 20px;
   font-size: 1.3em;
@@ -95,10 +115,10 @@ input[type="text"] {
 }
 
 input[type="submit"] {
-    flex: 0 0 20%;
-    margin: 1em;
-    padding: 5px;
-    cursor: pointer;
+  flex: 0 0 20%;
+  margin: 1em;
+  padding: 5px;
+  cursor: pointer;
 }
 
 /* div ul li {

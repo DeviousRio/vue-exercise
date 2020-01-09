@@ -1,6 +1,17 @@
 import Vue from 'vue'
 import Router from 'vue-router';
 import App from './App.vue'
+import { ValidationProvider, extend } from 'vee-validate';
+import { required } from 'vee-validate/dist/rules';
+
+extend('required', {
+  ...required,
+  message: 'This field is required'
+});
+
+// Register it globally
+// main.js or any entry file
+Vue.component('ValidationProvider', ValidationProvider);
 
 Vue.config.productionTip = false
 
