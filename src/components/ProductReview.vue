@@ -1,5 +1,5 @@
 <template>
-  <!-- @submit.prevent the page wont refresh when the submit button is clicked -->
+  <!-- @submit.prevent - the page wont refresh when the submit button is clicked -->
   <form class="review-form" @submit.prevent="onSubmit">
     <p class="errors" v-if="errors.length">
         <ul>
