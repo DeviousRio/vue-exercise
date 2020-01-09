@@ -13,9 +13,12 @@
       <input type="submit" />
     </form>
 
-    <ul>
-      <li v-for="(data, index) in skills" :key="index">{{ data.skill }}</li>
-    </ul>
+      <!-- Added group animations -> https://daneden.github.io/animate.css/ -->
+      <ul>
+        <transition-group name="list" enter-active-class="animated bounceInUp" leave-active-class="animated flipOut">
+          <li v-for="(data, index) in skills" :key="index">{{ data.skill }}</li>
+        </transition-group>
+      </ul>
 
     <p>These are the skills that you possess.</p>
 
@@ -60,6 +63,8 @@ export default {
 </script>
 
 <style scoped>
+@import "https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.2/animate.min.css";
+
 .holder {
   margin-top: 1em;
   padding: 2em;
