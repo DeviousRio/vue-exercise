@@ -16,7 +16,9 @@
       <!-- Added group animations -> https://daneden.github.io/animate.css/ -->
       <ul>
         <transition-group name="list" enter-active-class="animated bounceInUp" leave-active-class="animated flipOut">
-          <li v-for="(data, index) in skills" :key="index">{{ data.skill }}</li>
+          <li v-for="(data, index) in skills" :key="index">{{ data.skill }}
+            <i class="fas fa-minus-circle" v-on:click="remove(index)"></i>
+          </li>
         </transition-group>
       </ul>
 
@@ -57,13 +59,17 @@ export default {
         return;
       }
       this.skill = "";
+    },
+    remove(id) {
+      this.skills.splice(id, 1);
     }
   }
 };
 </script>
 
 <style scoped>
-@import "https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.2/animate.min.css";
+@import url("https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.2/animate.min.css");
+@import url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.9.0/css/all.css");
 
 .holder {
   margin-top: 1em;
@@ -84,6 +90,11 @@ ul li {
   border-left: 5px solid #3eb3f6;
   margin-bottom: 2px;
   color: #3e5252;
+}
+
+ul li i {
+  float: right;
+  cursor: pointer;
 }
 
 p {
