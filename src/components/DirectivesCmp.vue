@@ -25,14 +25,22 @@
     <!-- v-bind example -->
     <span>v-bind example</span>
     <input v-model="email" v-bind:class="[email.length <= 2 ? 'red' : 'green']" />
-    <button onclick="alert('signed up')" v-bind:disabled="email.length < 2">Submit</button>
+    <button v-on:click="alert" v-bind:disabled="email.length < 2">Submit</button>
 
     <!-- v-for example -->
     <span>v-for example</span>
     <ul>
       <!-- :key is short syntax from v-bind:key -->
-      <li v-for="(person, key) in persons" :key="key">{{person}}</li>
+      <li v-for="(person, key) in persons" :key="key">Name: {{ person.name | capitalize }} - Profession: {{ person.profession | capitalize }}</li>
     </ul>
+
+    <!-- v-on example -->
+    <span>v-on example</span>
+    <form @submit.prevent="addPerson">
+      <input v-model="name" type="text" placeholder="Enter your name">
+      <input v-model="profession" type="text" placeholder="Enter your profession">
+      <input type="submit">
+    </form>
   </div>
 </template>
 
@@ -44,8 +52,30 @@ export default {
       greeting: "Hello World!",
       count: -1,
       email: "pesho@pesho.com",
-      persons: ["Stamat", "Pesho", "Gosho"]
+      name: '',
+      profession: '',
+      persons: [
+        { name: 'Stamat', profession: 'Strugar' },
+        { name: 'Pesho', profession: 'Zavarchik' },
+        { name: 'Gosho', profession: 'Barutnik' }
+      ]
     };
+  },
+  methods: {
+    alert() {
+      alert('Signed in!');
+    },
+    addPerson() {
+      this.persons.push({name: this.name, profession: this.profession});
+      this.name = '';
+      this.profession = '';
+    }
+  },
+  // filters can be used to apply common text formatting - should be appended to the end of the expression denoted by 'pipe' symbol
+  filters: {
+    capitalize(value) {
+      return value.toUpperCase();
+    }
   }
 };
 </script>
@@ -85,4 +115,17 @@ span {
 .green {
   border: 2px solid green;
 }
+
+form {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+form input {
+  flex: 0 0 100%;
+  padding: 2px;
+  margin: 5px;
+}
+
 </style>
