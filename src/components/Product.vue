@@ -64,6 +64,8 @@
 
 <script>
 import ProductReview from './ProductReview';
+import greenSocks from '@/assets/vmSocks-green.jpg';
+import blueSocks from '@/assets/vmSocks-blue.jpg';
 
 export default {
   name: "Product",
@@ -75,23 +77,20 @@ export default {
       brand: "Vue Mastery",
       product: "Socks",
       description: "Faster memory speed, wireless and dual digital mic",
-      link:
-        "https://www.amazon.com/s/ref=nb_sb_noss?url=search-alias%3Daps&field-keywords=socks",
+      link: "https://www.amazon.com/s/ref=nb_sb_noss?url=search-alias%3Daps&field-keywords=socks",
       selectedVariant: 0,
       details: ["80% cotton", "20% polyester", "Gender-neutral"],
       variants: [
         {
           variantId: 1,
           variantColor: "green",
-          variantImage:
-            "https://www.vuemastery.com/images/challenges/vmSocks-green-onWhite.jpg",
+          variantImage: greenSocks,
           variantQuantity: 9
         },
         {
           variantId: 2,
           variantColor: "blue",
-          variantImage:
-            "https://www.vuemastery.com/images/challenges/vmSocks-blue-onWhite.jpg",
+          variantImage: blueSocks,
           variantQuantity: 0
         }
       ],
