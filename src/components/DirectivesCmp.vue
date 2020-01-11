@@ -57,7 +57,7 @@ export default {
       persons: [
         { name: 'Stamat', profession: 'Strugar' },
         { name: 'Pesho', profession: 'Zavarchik' },
-        { name: 'Gosho', profession: 'Barutnik' }
+        { name: 'Gosho', profession: 'Beer-Drinker' }
       ]
     };
   },

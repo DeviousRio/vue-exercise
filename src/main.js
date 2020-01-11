@@ -4,6 +4,7 @@ import App from './App.vue'
 import { ValidationProvider, extend } from 'vee-validate';
 import { required } from 'vee-validate/dist/rules';
 
+// Question: Can i make more of these and reuse them and is this the right file
 extend('required', {
   ...required,
   message: 'This field is required'
