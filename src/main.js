@@ -13,7 +13,6 @@ extend('required', {
 // Register it globally
 // main.js or any entry file
 Vue.component('ValidationProvider', ValidationProvider);
-
 Vue.config.productionTip = false
 
 new Vue({
