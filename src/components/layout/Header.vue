@@ -6,7 +6,7 @@
       <router-link to="/directives">Directives</router-link>
       <router-link to="/products">Products</router-link>
       <router-link to="/skills">Skills</router-link>
-      <router-link to="/quiz">Quiz</router-link>
+      <router-link to="/todo">ToDo</router-link>
     </div>
   </header>
 </template>

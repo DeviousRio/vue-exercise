@@ -4,7 +4,7 @@ import Home from './views/Home';
 import Directives from './views/Directives';
 import Products from './views/Products';
 import Skills from './views/Skills';
-import Quiz from './views/Quiz';
+import ToDo from './views/ToDo';
 
 Vue.use(Router);
 
@@ -14,6 +14,6 @@ export default new Router({
     { path: '/directives', name: 'directives', component: Directives },
     { path: '/products', name: 'products', component: Products },
     { path: '/skills', name: 'skills', component: Skills },
-    { path: '/quiz', name: 'quiz', component: Quiz }
+    { path: '/todo', name: 'todo', component: ToDo }
   ]
 });
