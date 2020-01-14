@@ -17,7 +17,7 @@
           class="todo-item-label"
           :class="{ completed : todo.completed }"
         >{{ todo.title }}</p>
-        
+
         <input
           v-else
           class="todo-item-edit"
@@ -30,6 +30,16 @@
         <!-- v-focus custom directive doesnt work -->
       </div>
       <p class="remove-item" @click="removeToDo(index)">&times;</p>
+    </div>
+
+    <div class="extra-container">
+      <div>
+        <label>
+          <input type="checkbox" :checked="!anyRemaining" @change="checkAllTodos" />Check All
+        </label>
+      </div>
+
+      <p>{{ remaining }} items left</p>
     </div>
   </div>
 </template>
@@ -57,6 +67,14 @@ export default {
         }
       ]
     };
+  },
+  computed: {
+      remaining() {
+          return this.todos.filter(todo => !todo.completed).length;
+      },
+      anyRemaining() {
+          return this.remaining !== 0;
+      }
   },
   //   direvtives: {
   //     focus: {
@@ -96,6 +114,9 @@ export default {
     },
     removeToDo(index) {
       this.todos.splice(index, 1);
+    },
+    checkAllTodos() {
+       this.todos.forEach((todo) => todo.completed = event.target.checked);
     }
   }
 };
@@ -162,5 +183,38 @@ div {
 .completed {
   text-decoration: line-through;
   color: gray;
+}
+
+.extra-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 16px;
+    border-top: 1px solid lightgrey;
+    padding-top: 14px;
+    margin-bottom: 14px;
+}
+
+.extra-container div {
+    flex: 0 0 70%;
+    margin-left: 0;
+}
+
+button {
+    font-size: 14px;
+    background-color: #fff;
+    appearance: none;
+}
+
+button:hover {
+    background-color: lightgreen;
+}
+
+button:focus {
+    outline: none;
+}
+
+.active {
+    background-color: lightgreen;
 }
 </style>
