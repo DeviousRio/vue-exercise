@@ -8,7 +8,7 @@
       @keyup.enter="addTodo"
     />
 
-    <div v-for="(todo, index) in todos" :key="todo.id" class="todo-item">
+    <div v-for="(todo, index) in todosFiltered" :key="todo.id" class="todo-item">
       <div class="todo-item-left">
         <input type="checkbox" v-model="todo.completed" />
         <p
@@ -26,8 +26,9 @@
           @blur="doneEdit(todo)"
           @keyup.enter="doneEdit(todo)"
           @keyup.esc="cancelEdit(todo)"
+          v-focus
         />
-        <!-- v-focus custom directive doesnt work -->
+        <!-- v-focus custom directive doesnt work properly -->
       </div>
       <p class="remove-item" @click="removeToDo(index)">&times;</p>
     </div>
@@ -44,9 +45,9 @@
 
     <div class="extra-container">
       <div>
-        <button :class="{ active: filter = 'all'}" @click="filter = 'all'">All</button>
-        <button :class="{ active: filter = 'active'}" @click="filter = 'active'">Active</button>
-        <button :class="{ active: filter = 'completed'}" @click="filter = 'completed'">Completed</button>
+        <button :class="{ active: filter == 'all'}" @click="filter = 'all'">All</button>
+        <button :class="{ active: filter == 'active'}" @click="filter = 'active'">Active</button>
+        <button :class="{ active: filter == 'completed'}" @click="filter = 'completed'">Completed</button>
       </div>
 
       <p>Clear completed</p>
@@ -62,6 +63,7 @@ export default {
       newTodo: "",
       idForTodo: 3,
       beforeEditCache: "",
+      filter: "all",
       todos: [
         {
           id: 1,
@@ -79,20 +81,31 @@ export default {
     };
   },
   computed: {
-      remaining() {
-          return this.todos.filter(todo => !todo.completed).length;
-      },
-      anyRemaining() {
-          return this.remaining !== 0;
+    remaining() {
+      return this.todos.filter(todo => !todo.completed).length;
+    },
+    anyRemaining() {
+      return this.remaining != 0;
+    },
+    todosFiltered() {
+      if (this.filter == "all") {
+        return this.todos;
+      } else if (this.filter == "active") {
+        return this.todos.filter(todo => !todo.completed);
+      } else if (this.filter == "completed") {
+        return this.todos.filter(todo => todo.completed);
       }
+
+      return this.todos;
+    }
   },
-  //   direvtives: {
-  //     focus: {
-  //       inserted: function(el) {
-  //         el.focus();
-  //       }
-  //     }
-  //   },
+  directives: {
+    focus: {
+      inserted: function(el) {
+        el.focus();
+      }
+    }
+  },
   methods: {
     addTodo() {
       if (this.newTodo.trim() == "") {
@@ -126,7 +139,7 @@ export default {
       this.todos.splice(index, 1);
     },
     checkAllTodos() {
-       this.todos.forEach((todo) => todo.completed = event.target.checked);
+      this.todos.forEach(todo => (todo.completed = event.target.checked));
     }
   }
 };
@@ -196,35 +209,35 @@ div {
 }
 
 .extra-container {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    font-size: 16px;
-    border-top: 1px solid lightgrey;
-    padding-top: 14px;
-    margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 16px;
+  border-top: 1px solid lightgrey;
+  padding-top: 14px;
+  margin-bottom: 14px;
 }
 
 .extra-container div {
-    flex: 0 0 70%;
-    margin-left: 0;
+  flex: 0 0 70%;
+  margin-left: 0;
 }
 
 button {
-    font-size: 14px;
-    background-color: #fff;
-    appearance: none;
+  font-size: 14px;
+  background-color: #fff;
+  appearance: none;
 }
 
 button:hover {
-    background-color: lightgreen;
+  background-color: lightgreen;
 }
 
 button:focus {
-    outline: none;
+  outline: none;
 }
 
 .active {
-    background-color: lightgreen;
+  background-color: lightgreen;
 }
 </style>
