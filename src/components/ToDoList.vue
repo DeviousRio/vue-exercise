@@ -1,42 +1,10 @@
 <template>
   <div>
-    <input
-      type="text"
-      class="todo-input"
-      placeholder="What needs to be done"
-      v-model="newTodo"
-      @keyup.enter="addTodo"
-    />
+    <input type="text" class="todo-input" placeholder="What needs to be done" v-model="newTodo" @keyup.enter="addTodo" />
 
-    <transition-group
-      name="fade"
-      enter-active-class="animated fadeInUp"
-      leave-active-class="animated fadeOutDown"
-    >
-      <div v-for="(todo, index) in todosFiltered" :key="todo.id" class="todo-item">
-        <div class="todo-item-left">
-          <input type="checkbox" v-model="todo.completed" />
-          <p
-            v-if="!todo.editing"
-            @dblclick="editToDo(todo)"
-            class="todo-item-label"
-            :class="{ completed : todo.completed }"
-          >{{ todo.title }}</p>
-
-          <input
-            v-else
-            class="todo-item-edit"
-            type="text"
-            v-model="todo.title"
-            @blur="doneEdit(todo)"
-            @keyup.enter="doneEdit(todo)"
-            @keyup.esc="cancelEdit(todo)"
-            v-focus
-          />
-          <!-- v-focus custom directive doesnt work properly -->
-        </div>
-        <p class="remove-item" @click="removeToDo(index)">&times;</p>
-      </div>
+    <transition-group name="fade" enter-active-class="animated fadeInUp" leave-active-class="animated fadeOutDown">
+      <ToDoListItem v-for="(todo, index) in todosFiltered" :key="todo.id" :todo="todo" :index="index" :checkAll="!anyRemaining" 
+      @removedTodo="removeTodo" @finishedEdit="finishedEdit" />
     </transition-group>
 
     <div class="extra-container">
@@ -56,11 +24,7 @@
         <button :class="{ active: filter == 'completed'}" @click="filter = 'completed'">Completed</button>
 
         <transition name="fade">
-          <button
-            v-if="showClearCompletedButton"
-            @click="clearCompleted"
-            class="clear-button"
-          >Clear Completed</button>
+          <button v-if="showClearCompletedButton" @click="clearCompleted" class="clear-button">Clear Completed</button>
         </transition>
       </div>
     </div>
@@ -68,8 +32,13 @@
 </template>
 
 <script>
+import ToDoListItem from './ToDoListItem';
+
 export default {
   name: "todo-list",
+  components: {
+    ToDoListItem
+  },
   data() {
     return {
       newTodo: "",
@@ -114,13 +83,6 @@ export default {
       return this.todos.filter(todo => todo.completed).length > 0;
     }
   },
-  directives: {
-    focus: {
-      inserted: function(el) {
-        el.focus();
-      }
-    }
-  },
   methods: {
     addTodo() {
       if (this.newTodo.trim() == "") {
@@ -135,22 +97,7 @@ export default {
       this.newTodo = "";
       this.idForTodo++;
     },
-    editToDo(todo) {
-      this.beforeEditCache = todo.title;
-      todo.editing = true;
-    },
-    cancelEdit(todo) {
-      todo.title = this.beforeEditCache;
-      todo.ending = false;
-    },
-    doneEdit(todo) {
-      if (todo.title.trim().length == 0) {
-        todo.title = this.beforeEditCache;
-      }
-
-      todo.editing = false;
-    },
-    removeToDo(index) {
+    removeTodo(index) {
       this.todos.splice(index, 1);
     },
     checkAllTodos() {
@@ -158,6 +105,9 @@ export default {
     },
     clearCompleted() {
       this.todos = this.todos.filter(todo => !todo.completed);
+    },
+    finishedEdit(data) {
+      this.todos.splice(data.index, 1, data.todo);
     }
   }
 };
@@ -181,52 +131,6 @@ div {
 
 .todo-input:focus {
   outline: 0;
-}
-
-.todo-item {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  animation-duration: 0.3s;
-}
-
-.remove-item {
-  cursor: pointer;
-  margin-left: 14px;
-}
-
-.remove-item:hover {
-  color: #000;
-}
-
-.todo-item-left {
-  display: flex;
-  align-items: center;
-  flex: 0 0 80%;
-  margin: 0;
-}
-
-.todo-item-label {
-  padding: 10px;
-  /* border: 1px solid #fff; */
-}
-
-.todo-item-edit {
-  font-size: 18px;
-  color: #2c3e50;
-  padding: 10px;
-  margin-left: 5px;
-  /* width: 100%; */
-  /* border: 1px solid #ccc; */
-}
-
-.todo-item-edit:hover {
-  outline: none;
-}
-
-.completed {
-  text-decoration: line-through;
-  color: gray;
 }
 
 .extra-container {
