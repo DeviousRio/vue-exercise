@@ -1,3 +1,4 @@
+<!-- Child Component -->
 <template>
   <div class="todo-item">
     <div class="todo-item-left">
