@@ -8,30 +8,36 @@
       @keyup.enter="addTodo"
     />
 
-    <div v-for="(todo, index) in todosFiltered" :key="todo.id" class="todo-item">
-      <div class="todo-item-left">
-        <input type="checkbox" v-model="todo.completed" />
-        <p
-          v-if="!todo.editing"
-          @dblclick="editToDo(todo)"
-          class="todo-item-label"
-          :class="{ completed : todo.completed }"
-        >{{ todo.title }}</p>
+    <transition-group
+      name="fade"
+      enter-active-class="animated fadeInUp"
+      leave-active-class="animated fadeOutDown"
+    >
+      <div v-for="(todo, index) in todosFiltered" :key="todo.id" class="todo-item">
+        <div class="todo-item-left">
+          <input type="checkbox" v-model="todo.completed" />
+          <p
+            v-if="!todo.editing"
+            @dblclick="editToDo(todo)"
+            class="todo-item-label"
+            :class="{ completed : todo.completed }"
+          >{{ todo.title }}</p>
 
-        <input
-          v-else
-          class="todo-item-edit"
-          type="text"
-          v-model="todo.title"
-          @blur="doneEdit(todo)"
-          @keyup.enter="doneEdit(todo)"
-          @keyup.esc="cancelEdit(todo)"
-          v-focus
-        />
-        <!-- v-focus custom directive doesnt work properly -->
+          <input
+            v-else
+            class="todo-item-edit"
+            type="text"
+            v-model="todo.title"
+            @blur="doneEdit(todo)"
+            @keyup.enter="doneEdit(todo)"
+            @keyup.esc="cancelEdit(todo)"
+            v-focus
+          />
+          <!-- v-focus custom directive doesnt work properly -->
+        </div>
+        <p class="remove-item" @click="removeToDo(index)">&times;</p>
       </div>
-      <p class="remove-item" @click="removeToDo(index)">&times;</p>
-    </div>
+    </transition-group>
 
     <div class="extra-container">
       <div>
@@ -44,13 +50,19 @@
     </div>
 
     <div class="extra-container">
-      <div>
+      <div class="button-container">
         <button :class="{ active: filter == 'all'}" @click="filter = 'all'">All</button>
         <button :class="{ active: filter == 'active'}" @click="filter = 'active'">Active</button>
         <button :class="{ active: filter == 'completed'}" @click="filter = 'completed'">Completed</button>
-      </div>
 
-      <p>Clear completed</p>
+        <transition name="fade">
+          <button
+            v-if="showClearCompletedButton"
+            @click="clearCompleted"
+            class="clear-button"
+          >Clear Completed</button>
+        </transition>
+      </div>
     </div>
   </div>
 </template>
@@ -97,6 +109,9 @@ export default {
       }
 
       return this.todos;
+    },
+    showClearCompletedButton() {
+      return this.todos.filter(todo => todo.completed).length > 0;
     }
   },
   directives: {
@@ -140,12 +155,17 @@ export default {
     },
     checkAllTodos() {
       this.todos.forEach(todo => (todo.completed = event.target.checked));
+    },
+    clearCompleted() {
+      this.todos = this.todos.filter(todo => !todo.completed);
     }
   }
 };
 </script>
 
 <style scoped>
+@import url("https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.2/animate.min.css");
+
 div {
   max-width: 600px;
   margin: 1em auto;
@@ -167,6 +187,7 @@ div {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  animation-duration: 0.3s;
 }
 
 .remove-item {
@@ -219,14 +240,24 @@ div {
 }
 
 .extra-container div {
-  flex: 0 0 70%;
+  flex: 0 0 60%;
   margin-left: 0;
 }
 
+.button-container {
+  display: flex;
+}
+
 button {
+  flex: 0 0 35%;
   font-size: 14px;
   background-color: #fff;
   appearance: none;
+  border: 1px solid #000;
+  border-radius: 5px;
+  padding: 4px;
+  margin: 0 10px;
+  cursor: pointer;
 }
 
 button:hover {
@@ -239,5 +270,15 @@ button:focus {
 
 .active {
   background-color: lightgreen;
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.5s;
+}
+
+.fade-enter,
+.fade-leave-to {
+  opacity: 0;
 }
 </style>
