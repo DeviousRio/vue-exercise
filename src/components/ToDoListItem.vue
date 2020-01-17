@@ -27,6 +27,8 @@
 </template>
 
 <script>
+import { EventBus } from '../main';
+
 export default {
   name: "ToDoListItem",
   props: {
@@ -70,7 +72,7 @@ export default {
   },
   methods: {
     removeTodo(index) {
-      this.$emit("removedTodo", index);
+      EventBus.$emit("removedTodo", index);
     },
     editTodo() {
       this.beforeEditCache = this.title;
@@ -82,7 +84,7 @@ export default {
       }
 
       this.editing = false;
-      this.$emit("finishedEdit", {
+      EventBus.$emit("finishedEdit", {
         index: this.index,
         todo: {
           id: this.id,

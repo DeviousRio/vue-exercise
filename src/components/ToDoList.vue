@@ -4,8 +4,7 @@
     <input type="text" class="todo-input" placeholder="What needs to be done" v-model="newTodo" @keyup.enter="addTodo" />
 
     <transition-group name="fade" enter-active-class="animated fadeInUp" leave-active-class="animated fadeOutDown">
-      <ToDoListItem v-for="(todo, index) in todosFiltered" :key="todo.id" :todo="todo" :index="index" :checkAll="!anyRemaining" 
-      @removedTodo="removeTodo" @finishedEdit="finishedEdit" />
+      <ToDoListItem v-for="(todo, index) in todosFiltered" :key="todo.id" :todo="todo" :index="index" :checkAll="!anyRemaining" />
     </transition-group>
 
     <div class="extra-container">
@@ -34,6 +33,7 @@
 
 <script>
 import ToDoListItem from './ToDoListItem';
+import { EventBus } from '../main';
 
 export default {
   name: "todo-list",
@@ -61,6 +61,10 @@ export default {
         }
       ]
     };
+  },
+  created() {
+    EventBus.$on('removedTodo', (index) => this.removeTodo(index))
+    EventBus.$on('finishedEdit', (data) => this.finishedEdit(data))
   },
   computed: {
     remaining() {
