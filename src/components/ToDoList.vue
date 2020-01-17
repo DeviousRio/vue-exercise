@@ -1,51 +1,67 @@
 <!-- Parent Component -->
 <template>
   <div>
-    <input type="text" class="todo-input" placeholder="What needs to be done" v-model="newTodo" @keyup.enter="addTodo" />
+    <input
+      type="text"
+      class="todo-input"
+      placeholder="What needs to be done"
+      v-model="newTodo"
+      @keyup.enter="addTodo"
+    />
 
-    <transition-group name="fade" enter-active-class="animated fadeInUp" leave-active-class="animated fadeOutDown">
-      <ToDoListItem v-for="(todo, index) in todosFiltered" :key="todo.id" :todo="todo" :index="index" :checkAll="!anyRemaining" />
+    <transition-group
+      name="fade"
+      enter-active-class="animated fadeInUp"
+      leave-active-class="animated fadeOutDown"
+    >
+      <ToDoListItem
+        v-for="(todo, index) in todosFiltered"
+        :key="todo.id"
+        :todo="todo"
+        :index="index"
+        :checkAll="!anyRemaining"
+      />
     </transition-group>
 
     <div class="extra-container">
-      <div>
-        <label>
-          <input type="checkbox" :checked="!anyRemaining" @change="checkAllTodos" />Check All
-        </label>
-      </div>
+      <TodoCheckAll :anyRemaining="anyRemaining" />
 
-      <p>{{ remaining }} items left</p>
+      <TodoItemsRemaining :remaining="remaining" />
     </div>
 
     <div class="extra-container">
-      <div class="button-container">
-        <button :class="{ active: filter == 'all'}" @click="filter = 'all'">All</button>
-        <button :class="{ active: filter == 'active'}" @click="filter = 'active'">Active</button>
-        <button :class="{ active: filter == 'completed'}" @click="filter = 'completed'">Completed</button>
+      <TodoFiltered />
 
-        <transition name="fade">
-          <button v-if="showClearCompletedButton" @click="clearCompleted" class="clear-button">Clear Completed</button>
-        </transition>
-      </div>
+      <transition name="fade">
+        <TodoClearCompleted :showClearCompletedButton="showClearCompletedButton" />
+      </transition>
     </div>
   </div>
 </template>
 
 <script>
-import ToDoListItem from './ToDoListItem';
-import { EventBus } from '../main';
+import { EventBus } from "../main";
+import ToDoListItem from "./ToDoListItem";
+import TodoItemsRemaining from "./TodoItemsRemaining";
+import TodoCheckAll from "./TodoCheckAll";
+import TodoFiltered from "./TodoFiltered";
+import TodoClearCompleted from "./TodoClearCompleted";
 
 export default {
   name: "todo-list",
   components: {
-    ToDoListItem
+    ToDoListItem,
+    TodoItemsRemaining,
+    TodoCheckAll,
+    TodoFiltered,
+    TodoClearCompleted
   },
   data() {
     return {
       newTodo: "",
       idForTodo: 3,
-      beforeEditCache: "",
       filter: "all",
+      beforeEditCache: "",
       todos: [
         {
           id: 1,
@@ -63,8 +79,18 @@ export default {
     };
   },
   created() {
-    EventBus.$on('removedTodo', (index) => this.removeTodo(index))
-    EventBus.$on('finishedEdit', (data) => this.finishedEdit(data))
+    EventBus.$on("removedTodo", index => this.removeTodo(index));
+    EventBus.$on("finishedEdit", data => this.finishedEdit(data));
+    EventBus.$on("checkAllChanged", checked => this.checkAllTodos(checked));
+    EventBus.$on("filterChanged", filter => (this.filter = filter));
+    EventBus.$on("clearCompletedTodos", () => this.clearCompleted());
+  },
+  beforeDestroy() {
+    EventBus.$off("removedTodo", index => this.removeTodo(index));
+    EventBus.$off("finishedEdit", data => this.finishedEdit(data));
+    EventBus.$off("checkAllChanged", checked => this.checkAllTodos(checked));
+    EventBus.$off("filterChanged", filter => (this.filter = filter));
+    EventBus.$off("clearCompletedTodos", () => this.clearCompleted());
   },
   computed: {
     remaining() {
@@ -155,30 +181,6 @@ div {
 
 .button-container {
   display: flex;
-}
-
-button {
-  flex: 0 0 35%;
-  font-size: 14px;
-  background-color: #fff;
-  appearance: none;
-  border: 1px solid #000;
-  border-radius: 5px;
-  padding: 4px;
-  margin: 0 10px;
-  cursor: pointer;
-}
-
-button:hover {
-  background-color: lightgreen;
-}
-
-button:focus {
-  outline: none;
-}
-
-.active {
-  background-color: lightgreen;
 }
 
 .fade-enter-active,

@@ -22,12 +22,13 @@
       />
     </div>
 
+    <button @click="pluralize">Plural</button>
     <p class="remove-item" @click="removeTodo(index)">&times;</p>
   </div>
 </template>
 
 <script>
-import { EventBus } from '../main';
+import { EventBus } from "../main";
 
 export default {
   name: "ToDoListItem",
@@ -54,12 +55,18 @@ export default {
       beforeEditCache: ""
     };
   },
+  created() {
+    EventBus.$on("pluralize", this.handlePluralize);
+  },
+  beforeDestroy() {
+    EventBus.$off("pluralize", this.handlePluralize);
+  },
   watch: {
     checkAll() {
       if (this.checkAll) {
         this.completed = true;
       } else {
-          this.completed = this.todo.completed;
+        this.completed = this.todo.completed;
       }
     }
   },
@@ -97,6 +104,21 @@ export default {
     cancelEdit() {
       this.title = this.beforeEditCache;
       this.editing = false;
+    },
+    pluralize() {
+      EventBus.$emit("pluralize");
+    },
+    handlePluralize() {
+      this.title = this.title + "s";
+      EventBus.$emit("finishedEdit", {
+        index: this.index,
+        todo: {
+          id: this.id,
+          title: this.title,
+          completed: this.completed,
+          editing: this.editing
+        }
+      });
     }
   }
 };
@@ -145,5 +167,24 @@ export default {
 
 .remove-item:hover {
   color: #000;
+}
+
+button {
+  font-size: 14px;
+  background-color: #fff;
+  appearance: none;
+  border: 1px solid #000;
+  border-radius: 5px;
+  padding: 4px;
+  margin: 0 10px;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: lightgreen;
+}
+
+button:focus {
+  outline: none;
 }
 </style>

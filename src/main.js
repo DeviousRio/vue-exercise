@@ -4,6 +4,7 @@ import App from './App.vue'
 import { ValidationProvider, extend } from 'vee-validate';
 import { required } from 'vee-validate/dist/rules';
 
+// Exporting event bus
 export const EventBus = new Vue();
 
 // Question: Can i make more of these and reuse them and is this the right file
