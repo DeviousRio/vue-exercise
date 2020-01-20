@@ -37,10 +37,6 @@ export default {
       type: Object,
       required: true
     },
-    index: {
-      type: Number,
-      required: true
-    },
     checkAll: {
       type: Boolean,
       required: true
@@ -79,8 +75,7 @@ export default {
   },
   methods: {
     removeTodo(id) {
-      const index = this.$store.state.todos.findIndex((item) => item.id == id);
-      this.$store.state.todos.splice(index, 1);
+      this.$store.dispatch('deleteTodo', id);
     },
     editTodo() {
       this.beforeEditCache = this.title;
@@ -92,23 +87,12 @@ export default {
       }
 
       this.editing = false;
-      const index = this.$store.state.todos.findIndex(item => item.id == this.id);
-      this.$store.state.todos.splice(index, 1, {
+      this.$store.dispatch('updateTodo', {
           id: this.id,
           title: this.title,
           completed: this.completed,
           editing: this.editing
       });
-      
-      // EventBus.$emit("finishedEdit", {
-      //   index: this.index,
-      //   todo: {
-      //     id: this.id,
-      //     title: this.title,
-      //     completed: this.completed,
-      //     editing: this.editing
-      //   }
-      // });
     },
     cancelEdit() {
       this.title = this.beforeEditCache;
@@ -119,8 +103,7 @@ export default {
     },
     handlePluralize() {
       this.title = this.title + "s";
-      const index = this.$store.state.todos.findIndex(item => item.id == this.id);
-      this.$store.state.todos.splice(index, 1, {
+      this.$store.dispatch('updateTodo', {
           id: this.id,
           title: this.title,
           completed: this.completed,
