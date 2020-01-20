@@ -23,7 +23,7 @@
     </div>
 
     <button @click="pluralize">Plural</button>
-    <p class="remove-item" @click="removeTodo(index)">&times;</p>
+    <p class="remove-item" @click="removeTodo(todo.id)">&times;</p>
   </div>
 </template>
 
@@ -78,8 +78,9 @@ export default {
     }
   },
   methods: {
-    removeTodo(index) {
-      EventBus.$emit("removedTodo", index);
+    removeTodo(id) {
+      const index = this.$store.state.todos.findIndex((item) => item.id == id);
+      this.$store.state.todos.splice(index, 1);
     },
     editTodo() {
       this.beforeEditCache = this.title;
@@ -91,15 +92,23 @@ export default {
       }
 
       this.editing = false;
-      EventBus.$emit("finishedEdit", {
-        index: this.index,
-        todo: {
+      const index = this.$store.state.todos.findIndex(item => item.id == this.id);
+      this.$store.state.todos.splice(index, 1, {
           id: this.id,
           title: this.title,
           completed: this.completed,
           editing: this.editing
-        }
       });
+      
+      // EventBus.$emit("finishedEdit", {
+      //   index: this.index,
+      //   todo: {
+      //     id: this.id,
+      //     title: this.title,
+      //     completed: this.completed,
+      //     editing: this.editing
+      //   }
+      // });
     },
     cancelEdit() {
       this.title = this.beforeEditCache;
@@ -110,14 +119,12 @@ export default {
     },
     handlePluralize() {
       this.title = this.title + "s";
-      EventBus.$emit("finishedEdit", {
-        index: this.index,
-        todo: {
+      const index = this.$store.state.todos.findIndex(item => item.id == this.id);
+      this.$store.state.todos.splice(index, 1, {
           id: this.id,
           title: this.title,
           completed: this.completed,
           editing: this.editing
-        }
       });
     }
   }
